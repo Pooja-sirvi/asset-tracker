@@ -1,53 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
 
 function EmployeeDashboard() {
-  // sample static data (later we can fetch from DB or Excel)
-  const employee = {
-    id: "EMP001",
-    name: "Pooja Sirvi",
-    email: "pooja.sirvi@nokia.com",
-    manager: "Manager Name",
-    callCenter: "Bangalore Call Center",
-    asset: {
-      machineNumber: "LAP12345",
-      type: "Laptop",
-      status: "Assigned",
-    },
-  };
+  const [request, setRequest] = useState("");
 
-  const handleRequestReturn = () => {
-    alert("Request for asset return/replacement sent to Manager!");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (request) {
+      alert(`Your ${request} request has been sent to the Manager.`);
+      setRequest(""); // reset after submitting
+    } else {
+      alert("Please select a request type.");
+    }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4 text-blue-700">Employee Dashboard</h1>
+    <div className="min-h-screen bg-gradient-to-r from-[#124191] to-blue-500 flex items-center justify-center">
+      <div className="bg-white shadow-2xl rounded-2xl p-8 w-96">
+        <h1 className="text-2xl font-bold text-[#124191] mb-6 text-center">
+          Employee Dashboard
+        </h1>
 
-      {/* Profile Section */}
-      <div className="bg-gray-100 p-4 rounded-lg shadow mb-4">
-        <h2 className="text-xl font-semibold mb-2">Profile Details</h2>
-        <p><b>ID:</b> {employee.id}</p>
-        <p><b>Name:</b> {employee.name}</p>
-        <p><b>Email:</b> {employee.email}</p>
-        <p><b>Manager:</b> {employee.manager}</p>
-        <p><b>Call Center:</b> {employee.callCenter}</p>
+        {/* Profile Card */}
+        <div className="p-4 border rounded-lg bg-gray-50 mb-6">
+          <p><strong>ID:</strong> EMP123</p>
+          <p><strong>Name:</strong> John Doe</p>
+          <p><strong>Email:</strong> employee@test.com</p>
+          <p><strong>Manager:</strong> Jane Smith</p>
+          <p><strong>Call Center:</strong> Bangalore</p>
+        </div>
+
+        {/* Request Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <label className="block font-medium text-gray-700">
+            Raise a Request:
+          </label>
+          <select
+            className="w-full border rounded-lg p-2"
+            value={request}
+            onChange={(e) => setRequest(e.target.value)}
+          >
+            <option value="">-- Select --</option>
+            <option value="Return">Return Asset</option>
+            <option value="Replacement">Replacement Request</option>
+          </select>
+
+          <button
+            type="submit"
+            className="w-full bg-[#124191] text-white rounded-lg p-3 font-medium hover:bg-blue-800 transition"
+          >
+            Submit Request
+          </button>
+        </form>
       </div>
-
-      {/* Asset Section */}
-      <div className="bg-gray-100 p-4 rounded-lg shadow mb-4">
-        <h2 className="text-xl font-semibold mb-2">Assigned Asset</h2>
-        <p><b>Machine Number:</b> {employee.asset.machineNumber}</p>
-        <p><b>Type:</b> {employee.asset.type}</p>
-        <p><b>Status:</b> {employee.asset.status}</p>
-      </div>
-
-      {/* Request Button */}
-      <button
-        onClick={handleRequestReturn}
-        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-      >
-        Request Asset Return / Replacement
-      </button>
     </div>
   );
 }

@@ -1,133 +1,82 @@
 import React, { useState } from "react";
 
 function ManagerDashboard() {
-  const [employees, setEmployees] = useState([
+  // Sample employee + asset data
+  const [assets, setAssets] = useState([
     {
-      id: "EMP001",
-      name: "Pooja Sirvi",
-      email: "pooja.sirvi@nokia.com",
-      machineNumber: "LAP12345",
-      status: "Assigned",
+      id: 1,
+      employee: "John Doe",
+      email: "employee@test.com",
+      asset: "Laptop - Dell XPS",
+      status: "In Use",
+      request: "",
     },
     {
-      id: "EMP002",
-      name: "Rahul Mehta",
-      email: "rahul.mehta@nokia.com",
-      machineNumber: "LAP98765",
-      status: "Assigned",
+      id: 2,
+      employee: "Alice Smith",
+      email: "alice@test.com",
+      asset: "Headset - Logitech",
+      status: "In Use",
+      request: "Return",
     },
   ]);
 
-  const [editId, setEditId] = useState(null); // track which row is being edited
-  const [editFormData, setEditFormData] = useState({
-    machineNumber: "",
-    status: "",
-  });
-
-  // handle edit click
-  const handleEditClick = (emp) => {
-    setEditId(emp.id);
-    setEditFormData({
-      machineNumber: emp.machineNumber,
-      status: emp.status,
-    });
-  };
-
-  // handle input change
-  const handleChange = (e) => {
-    setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
-  };
-
-  // handle save
-  const handleSave = (id) => {
-    const updatedEmployees = employees.map((emp) =>
-      emp.id === id
-        ? { ...emp, machineNumber: editFormData.machineNumber, status: editFormData.status }
-        : emp
+  const handleAction = (id, action) => {
+    setAssets((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, status: action, request: "" } : item
+      )
     );
-    setEmployees(updatedEmployees);
-    setEditId(null); // exit edit mode
+    alert(`Asset for Employee ID ${id} marked as ${action}`);
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4 text-green-700">Manager Dashboard</h1>
+    <div className="min-h-screen bg-gradient-to-r from-[#124191] to-blue-500 p-8">
+      <div className="bg-white shadow-2xl rounded-2xl p-6">
+        <h1 className="text-2xl font-bold text-[#124191] mb-6 text-center">
+          Manager Dashboard
+        </h1>
 
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="border border-gray-300 px-4 py-2">ID</th>
-            <th className="border border-gray-300 px-4 py-2">Name</th>
-            <th className="border border-gray-300 px-4 py-2">Email</th>
-            <th className="border border-gray-300 px-4 py-2">Machine Number</th>
-            <th className="border border-gray-300 px-4 py-2">Status</th>
-            <th className="border border-gray-300 px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.map((emp) => (
-            <tr key={emp.id}>
-              <td className="border border-gray-300 px-4 py-2">{emp.id}</td>
-              <td className="border border-gray-300 px-4 py-2">{emp.name}</td>
-              <td className="border border-gray-300 px-4 py-2">{emp.email}</td>
-
-              {/* If row is in edit mode */}
-              {editId === emp.id ? (
-                <>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <input
-                      type="text"
-                      name="machineNumber"
-                      value={editFormData.machineNumber}
-                      onChange={handleChange}
-                      className="border rounded p-1"
-                    />
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <select
-                      name="status"
-                      value={editFormData.status}
-                      onChange={handleChange}
-                      className="border rounded p-1"
-                    >
-                      <option>Assigned</option>
-                      <option>Returned</option>
-                      <option>Scrapped</option>
-                    </select>
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <button
-                      onClick={() => handleSave(emp.id)}
-                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mr-2"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditId(null)}
-                      className="bg-gray-400 text-white px-3 py-1 rounded hover:bg-gray-500"
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </>
-              ) : (
-                <>
-                  <td className="border border-gray-300 px-4 py-2">{emp.machineNumber}</td>
-                  <td className="border border-gray-300 px-4 py-2">{emp.status}</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <button
-                      onClick={() => handleEditClick(emp)}
-                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
-                    >
-                      Edit
-                    </button>
-                  </td>
-                </>
-              )}
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-[#124191] text-white">
+              <th className="border p-3">ID</th>
+              <th className="border p-3">Employee</th>
+              <th className="border p-3">Email</th>
+              <th className="border p-3">Asset</th>
+              <th className="border p-3">Status</th>
+              <th className="border p-3">Request</th>
+              <th className="border p-3">Action</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {assets.map((item) => (
+              <tr key={item.id} className="text-center">
+                <td className="border p-3">{item.id}</td>
+                <td className="border p-3">{item.employee}</td>
+                <td className="border p-3">{item.email}</td>
+                <td className="border p-3">{item.asset}</td>
+                <td className="border p-3">{item.status}</td>
+                <td className="border p-3">{item.request || "—"}</td>
+                <td className="border p-3 space-x-2">
+                  <button
+                    onClick={() => handleAction(item.id, "Returned")}
+                    className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700"
+                  >
+                    Approve Return
+                  </button>
+                  <button
+                    onClick={() => handleAction(item.id, "Replaced")}
+                    className="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600"
+                  >
+                    Approve Replacement
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -1,272 +1,219 @@
 import React, { useState } from "react";
 
 function AdminDashboard() {
+  // Dummy data for Assets
   const [assets, setAssets] = useState([
     {
-      id: "LAP123",
-      asset: "Laptop - Dell XPS",
-      owner: "John Doe",
-      status: "In Use",
-      assignedDate: "2025-09-01",
-      returnDate: "",
+      id: "LAP001",
+      type: "Laptop",
+      name: "Dell Latitude 7420",
+      date: "2025-09-01",
+      status: "Assigned",
+      assignedTo: "EMP101",
     },
     {
-      id: "HS456",
-      asset: "Headset - Logitech",
-      owner: "Alice Smith",
-      status: "Returned",
-      assignedDate: "2025-08-15",
-      returnDate: "2025-09-03",
+      id: "MON002",
+      type: "Monitor",
+      name: "Dell 24-inch",
+      date: "2025-08-15",
+      status: "Available",
+      assignedTo: null,
+    },
+    {
+      id: "PHN003",
+      type: "Phone",
+      name: "iPhone 13",
+      date: "2025-07-20",
+      status: "Assigned",
+      assignedTo: "EMP102",
     },
   ]);
 
+  // Dummy data for History
   const [history, setHistory] = useState([
     {
-      id: "MN789",
-      asset: "Monitor - HP",
-      owner: "Bob Lee",
-      status: "Scrapped",
-      assignedDate: "2025-07-20",
-      returnDate: "",
+      id: "LAP010",
+      type: "Laptop",
+      name: "HP EliteBook 840",
+      date: "2025-06-10",
+      status: "Deleted",
+      assignedTo: "EMP099",
     },
   ]);
 
-  const [newId, setNewId] = useState("");
-  const [newAsset, setNewAsset] = useState("");
-  const [newOwner, setNewOwner] = useState("");
-  const [newAssignedDate, setNewAssignedDate] = useState("");
-  const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState("assets"); // "assets" | "history"
+  const [newAsset, setNewAsset] = useState({});
 
-  const handleAction = (id, newStatus) => {
-    setAssets((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              status: newStatus,
-              returnDate:
-                newStatus === "Returned" ? new Date().toISOString().split("T")[0] : item.returnDate,
-            }
-          : item
-      )
-    );
-    alert(`Asset ${id} marked as ${newStatus}`);
+  // Add new asset
+  const handleAddAsset = () => {
+    if (!newAsset.id || !newAsset.type || !newAsset.name) {
+      alert("Please fill Asset ID, Type, and Name.");
+      return;
+    }
+
+    setAssets([
+      ...assets,
+      {
+        id: newAsset.id,
+        type: newAsset.type,
+        name: newAsset.name,
+        date: newAsset.date || new Date().toISOString().split("T")[0],
+        status: newAsset.assignedTo ? "Assigned" : "Available",
+        assignedTo: newAsset.assignedTo || null,
+      },
+    ]);
+
+    setNewAsset({});
   };
 
+  // Reissue asset to new employee
+  const handleReissue = (id) => {
+    const employeeId = prompt("Enter Employee ID to assign this asset:");
+    if (!employeeId) return;
+
+    setAssets(
+      assets.map((asset) =>
+        asset.id === id
+          ? { ...asset, assignedTo: employeeId, status: "Assigned" }
+          : asset
+      )
+    );
+  };
+
+  // Delete asset (move to history)
   const handleDelete = (id) => {
     const assetToDelete = assets.find((a) => a.id === id);
     if (assetToDelete) {
-      // Move to history
       setHistory([...history, { ...assetToDelete, status: "Deleted" }]);
-      // Remove from active list
       setAssets(assets.filter((a) => a.id !== id));
-      alert(`Asset ${id} moved to history`);
     }
   };
-
-  const handleAddAsset = (e) => {
-    e.preventDefault();
-    if (!newId || !newAsset || !newOwner || !newAssignedDate) {
-      alert("Please fill in all fields!");
-      return;
-    }
-    const newEntry = {
-      id: newId,
-      asset: newAsset,
-      owner: newOwner,
-      status: "In Use",
-      assignedDate: newAssignedDate,
-      returnDate: "",
-    };
-    setAssets([...assets, newEntry]);
-    setNewId("");
-    setNewAsset("");
-    setNewOwner("");
-    setNewAssignedDate("");
-  };
-
-  // Filter assets by ID or Owner
-  const filteredAssets = assets.filter(
-    (a) =>
-      a.id.toLowerCase().includes(search.toLowerCase()) ||
-      a.owner.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#124191] to-blue-500 p-8">
-      <div className="bg-white shadow-2xl rounded-2xl p-6">
-        <h1 className="text-2xl font-bold text-[#124191] mb-6 text-center">
-          Admin Dashboard
-        </h1>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">
+        Admin Dashboard
+      </h1>
 
-        {/* Tabs */}
-        <div className="flex justify-center mb-6 space-x-4">
-          <button
-            className={`px-4 py-2 rounded-lg ${
-              activeTab === "assets" ? "bg-[#124191] text-white" : "bg-gray-200"
-            }`}
-            onClick={() => setActiveTab("assets")}
-          >
-            Active Assets
-          </button>
-          <button
-            className={`px-4 py-2 rounded-lg ${
-              activeTab === "history" ? "bg-[#124191] text-white" : "bg-gray-200"
-            }`}
-            onClick={() => setActiveTab("history")}
-          >
-            History
-          </button>
+      {/* Add New Asset */}
+      <div className="bg-white p-6 rounded-2xl shadow-md mb-8">
+        <h2 className="text-xl font-semibold mb-4">Add New Asset</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <input
+            type="text"
+            placeholder="Asset ID (e.g., LAP123)"
+            value={newAsset.id || ""}
+            onChange={(e) => setNewAsset({ ...newAsset, id: e.target.value })}
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="text"
+            placeholder="Asset Type (e.g., Laptop, Phone)"
+            value={newAsset.type || ""}
+            onChange={(e) => setNewAsset({ ...newAsset, type: e.target.value })}
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="text"
+            placeholder="Asset Name/Model"
+            value={newAsset.name || ""}
+            onChange={(e) => setNewAsset({ ...newAsset, name: e.target.value })}
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="date"
+            value={newAsset.date || new Date().toISOString().split("T")[0]}
+            onChange={(e) => setNewAsset({ ...newAsset, date: e.target.value })}
+            className="border rounded-lg p-2"
+          />
+          <input
+            type="text"
+            placeholder="Assign to Employee ID (optional)"
+            value={newAsset.assignedTo || ""}
+            onChange={(e) =>
+              setNewAsset({ ...newAsset, assignedTo: e.target.value })
+            }
+            className="border rounded-lg p-2"
+          />
         </div>
+        <button
+          onClick={handleAddAsset}
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        >
+          Add Asset
+        </button>
+      </div>
 
-        {activeTab === "assets" && (
-          <>
-            {/* Add Asset Form */}
-            <form
-              onSubmit={handleAddAsset}
-              className="flex flex-col md:flex-row gap-4 mb-8"
-            >
-              <input
-                type="text"
-                placeholder="Asset ID"
-                value={newId}
-                onChange={(e) => setNewId(e.target.value)}
-                className="border p-2 rounded-lg flex-1"
-              />
-              <input
-                type="text"
-                placeholder="Asset Name"
-                value={newAsset}
-                onChange={(e) => setNewAsset(e.target.value)}
-                className="border p-2 rounded-lg flex-1"
-              />
-              <input
-                type="text"
-                placeholder="Owner Name"
-                value={newOwner}
-                onChange={(e) => setNewOwner(e.target.value)}
-                className="border p-2 rounded-lg flex-1"
-              />
-              <input
-                type="date"
-                value={newAssignedDate}
-                onChange={(e) => setNewAssignedDate(e.target.value)}
-                className="border p-2 rounded-lg flex-1"
-              />
-              <button
-                type="submit"
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-              >
-                ➕ Add Asset
-              </button>
-            </form>
+      {/* Assets Table */}
+      <div className="bg-white p-6 rounded-2xl shadow-md mb-8">
+        <h2 className="text-xl font-semibold mb-4">Assets</h2>
+        <table className="w-full border-collapse">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-3">Asset ID</th>
+              <th className="p-3">Type</th>
+              <th className="p-3">Name</th>
+              <th className="p-3">Date Added</th>
+              <th className="p-3">Status</th>
+              <th className="p-3">Assigned To</th>
+              <th className="p-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {assets.map((asset) => (
+              <tr key={asset.id} className="border-b">
+                <td className="p-3">{asset.id}</td>
+                <td className="p-3">{asset.type}</td>
+                <td className="p-3">{asset.name}</td>
+                <td className="p-3">{asset.date}</td>
+                <td className="p-3">{asset.status}</td>
+                <td className="p-3">{asset.assignedTo || "—"}</td>
+                <td className="p-3 space-x-2">
+                  <button
+                    onClick={() => handleReissue(asset.id)}
+                    className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700"
+                  >
+                    Reissue
+                  </button>
+                  <button
+                    onClick={() => handleDelete(asset.id)}
+                    className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-            {/* Search Bar */}
-            <div className="mb-6">
-              <input
-                type="text"
-                placeholder="Search by Asset ID or Owner"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="border p-2 rounded-lg w-full"
-              />
-            </div>
-
-            {/* Assets Table */}
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-[#124191] text-white">
-                  <th className="border p-3">Asset ID</th>
-                  <th className="border p-3">Asset</th>
-                  <th className="border p-3">Owner</th>
-                  <th className="border p-3">Status</th>
-                  <th className="border p-3">Assigned Date</th>
-                  <th className="border p-3">Return Date</th>
-                  <th className="border p-3">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredAssets.map((item) => (
-                  <tr key={item.id} className="text-center">
-                    <td className="border p-3">{item.id}</td>
-                    <td className="border p-3">{item.asset}</td>
-                    <td className="border p-3">{item.owner}</td>
-                    <td className="border p-3">{item.status}</td>
-                    <td className="border p-3">{item.assignedDate}</td>
-                    <td className="border p-3">{item.returnDate || "—"}</td>
-                    <td className="border p-3 space-x-2">
-                      <button
-                        onClick={() => handleAction(item.id, "Reissued")}
-                        className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
-                      >
-                        Reissue
-                      </button>
-                      <button
-                        onClick={() => handleAction(item.id, "Returned")}
-                        className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700"
-                      >
-                        Return
-                      </button>
-                      <button
-                        onClick={() => handleAction(item.id, "Scrapped")}
-                        className="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600"
-                      >
-                        Scrap
-                      </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {filteredAssets.length === 0 && (
-              <p className="text-center text-gray-500 mt-4">No assets found.</p>
-            )}
-          </>
-        )}
-
-        {activeTab === "history" && (
-          <>
-            <h2 className="text-xl font-bold text-[#124191] mb-4 text-center">
-              Deleted Assets History
-            </h2>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-700 text-white">
-                  <th className="border p-3">Asset ID</th>
-                  <th className="border p-3">Asset</th>
-                  <th className="border p-3">Owner</th>
-                  <th className="border p-3">Status</th>
-                  <th className="border p-3">Assigned Date</th>
-                  <th className="border p-3">Return Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {history.map((item) => (
-                  <tr key={item.id} className="text-center">
-                    <td className="border p-3">{item.id}</td>
-                    <td className="border p-3">{item.asset}</td>
-                    <td className="border p-3">{item.owner}</td>
-                    <td className="border p-3">{item.status}</td>
-                    <td className="border p-3">{item.assignedDate}</td>
-                    <td className="border p-3">{item.returnDate || "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {history.length === 0 && (
-              <p className="text-center text-gray-500 mt-4">No deleted assets yet.</p>
-            )}
-          </>
-        )}
+      {/* History Section */}
+      <div className="bg-white p-6 rounded-2xl shadow-md">
+        <h2 className="text-xl font-semibold mb-4">Deleted Assets History</h2>
+        <table className="w-full border-collapse">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-3">Asset ID</th>
+              <th className="p-3">Type</th>
+              <th className="p-3">Name</th>
+              <th className="p-3">Date Added</th>
+              <th className="p-3">Assigned To</th>
+              <th className="p-3">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {history.map((asset, index) => (
+              <tr key={index} className="border-b text-gray-500">
+                <td className="p-3">{asset.id}</td>
+                <td className="p-3">{asset.type}</td>
+                <td className="p-3">{asset.name}</td>
+                <td className="p-3">{asset.date}</td>
+                <td className="p-3">{asset.assignedTo || "—"}</td>
+                <td className="p-3">{asset.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

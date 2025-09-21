@@ -20,37 +20,51 @@ function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-white">
-      {/* Title on Background */}
-      <h1 className="text-5xl font-extrabold text-blue-900 mb-10">
-        Welcome to Asset Management Tool
-      </h1>
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-blue-900 to-blue-600 p-6 relative overflow-hidden">
+      {/* Decorative Blur Elements with Blob Animation */}
+      <div className="absolute top-[-100px] left-[-100px] w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+      <div className="absolute bottom-[-100px] right-[-100px] w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob [animation-delay:-2s]"></div>
 
-      {/* Login Card */}
-      <div className="bg-blue-700 p-10 rounded-3xl shadow-2xl w-[420px] text-white">
+      {/* Main Content Container with Pop-up Animation */}
+      <div className="relative z-10 text-center mb-12 animate-fadeInUp">
+        <img
+          src="https://res.cloudinary.com/dki6axgft/image/upload/v1757611339/Nokia_logo_RGB-Bright_blue_mvdrlq.jpg"
+          alt="Nokia Logo"
+          className="mx-auto h-24 mb-4 drop-shadow-lg"
+        />
+        <h1 className="text-5xl font-extrabold text-white tracking-wide drop-shadow-lg">
+          Asset Management
+        </h1>
+        <p className="text-white text-xl mt-2 font-light">
+          Manage your assets efficiently.
+        </p>
+      </div>
+
+      {/* Login Card with Zoom-in Animation */}
+      <div className="relative z-10 bg-white bg-opacity-10 p-10 rounded-3xl shadow-2xl backdrop-blur-xl w-[450px] text-white border border-white border-opacity-20 transform transition-all duration-500 hover:scale-105 animate-zoomIn [animation-delay:0.3s]">
         {/* Subtitle */}
-        <h2 className="text-center text-lg mb-6">
-          Please login with your credentials
+        <h2 className="text-center text-2xl font-semibold mb-6 text-gray-100">
+          Sign In
         </h2>
 
         <form className="flex flex-col gap-5" onSubmit={handleLogin}>
           <input
             type="email"
             placeholder="Email"
-            className="bg-gray-200 rounded-lg p-3 text-black text-sm"
+            className="bg-white bg-opacity-20 rounded-lg p-4 text-white placeholder-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:bg-opacity-30 transition"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
             placeholder="Password"
-            className="bg-gray-200 rounded-lg p-3 text-black text-sm"
+            className="bg-white bg-opacity-20 rounded-lg p-4 text-white placeholder-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:bg-opacity-30 transition"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <button
             type="submit"
-            className="bg-white text-blue-700 font-bold rounded-lg p-3 hover:bg-gray-200 transition"
+            className="bg-white bg-opacity-90 text-blue-800 font-bold rounded-lg p-4 mt-2 hover:bg-opacity-100 transition duration-300 shadow-lg transform hover:scale-105"
           >
             Login
           </button>

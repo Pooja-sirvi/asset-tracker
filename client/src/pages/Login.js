@@ -20,23 +20,26 @@ function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-blue-900 to-blue-600 p-6 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-cyan-500 p-6 relative overflow-hidden">
       {/* Decorative Blur Elements with Blob Animation */}
       <div className="absolute top-[-100px] left-[-100px] w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
       <div className="absolute bottom-[-100px] right-[-100px] w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob [animation-delay:-2s]"></div>
 
       {/* Main Content Container with Pop-up Animation */}
       <div className="relative z-10 text-center mb-12 animate-fadeInUp">
-        <img
-          src="https://res.cloudinary.com/dki6axgft/image/upload/v1757611339/Nokia_logo_RGB-Bright_blue_mvdrlq.jpg"
-          alt="Nokia Logo"
-          className="mx-auto h-24 mb-4 drop-shadow-lg"
-        />
+        {/* Code-Based Nokia Logo */}
+        <div
+          className="mx-auto mb-4 text-7xl font-['Nokia-Pure-Text'] text-white drop-shadow-lg"
+          style={{ letterSpacing: '0.15em' }}
+        >
+          NOKIA
+        </div>
+
         <h1 className="text-5xl font-extrabold text-white tracking-wide drop-shadow-lg">
-          Asset Management
+          Laptop Asset Management Tool
         </h1>
         <p className="text-white text-xl mt-2 font-light">
-          Manage your assets efficiently.
+          Manage assets efficiently.
         </p>
       </div>
 

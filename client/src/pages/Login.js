@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import NokiaLogo from "../logo.png"; 
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,13 +29,13 @@ function Login() {
 
       {/* Main Content Container with Pop-up Animation */}
       <div className="relative z-10 text-center mb-12 animate-fadeInUp">
-        {/* Code-Based Nokia Logo */}
-        <div
-          className="mx-auto mb-4 text-7xl font-['Nokia-Pure-Text'] text-white drop-shadow-lg"
-          style={{ letterSpacing: '0.15em' }}
-        >
-          NOKIA
-        </div>
+        {/* 2. REPLACE THE TEXT DIV WITH THE IMG TAG */}
+        <img
+          src={NokiaLogo}
+          alt="Nokia Official Logo"
+          // Adjust 'w-40' if the size isn't right for your image
+          className="mx-auto mb-4 w-40 h-auto drop-shadow-lg"
+        />
 
         <h1 className="text-5xl font-extrabold text-white tracking-wide drop-shadow-lg">
           Laptop Asset Management Tool

@@ -1,148 +1,58 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import {
-  User,
-  Mail,
-  Building,
-  Laptop,
-  Search,
-  Plus,
-  XCircle,
-  Package,
-  ArrowLeftRight,
-  ClipboardList,
-  Edit,
-  Upload,
-  FileText,
-  UserCircle,
+  User, Mail, Building, Laptop, Search, Plus, XCircle, Package, ArrowLeftRight,
+  ClipboardList, Edit, Upload, FileText, UserCircle,
 } from "lucide-react";
+
+import NokiaLogo from "../logo.png"; 
 
 function TeamAssetManagerDashboard() {
   const navigate = useNavigate();
 
-  // Dummy Manager Details
   const managerDetails = {
     name: "John Doe",
     managerId: "MGR001",
     email: "john.doe@nokia.com",
     managerEmail: "john.manager@nokia.com",
-    costCenterId: "CC1001",
+    managedCostCenterIds: ["CC1001", "CC1002"], 
   };
 
-  // Dummy Assets Data
   const [assets, setAssets] = useState([
-    {
-      serial: "LAP001",
-      manufacturer: "Dell",
-      model: "Latitude 7420",
-      date: "2025-09-01",
-      costCenterId: "CC1001",
-      status: "Assigned",
-      assignedTo: {
-        firstName: "Alice",
-        lastName: "Smith",
-        employeeId: "EMP101",
-        email: "emp101@nokia.com",
-        lineManager: "John Manager",
-        lineManagerId: "MGR001",
-        lineManagerEmail: "john.manager@nokia.com",
-        costCenterId: "CC1001",
-      },
-    },
-    {
-      serial: "LAP002",
-      manufacturer: "HP",
-      model: "EliteBook 840",
-      date: "2025-08-15",
-      costCenterId: "CC1002",
-      status: "Available",
-      assignedTo: null,
-    },
-    {
-      serial: "LAP003",
-      manufacturer: "Lenovo",
-      model: "ThinkPad X1",
-      date: "2025-08-20",
-      costCenterId: "CC1002",
-      status: "Assigned",
-      assignedTo: {
-        firstName: "Bob",
-        lastName: "Johnson",
-        employeeId: "EMP202",
-        email: "emp202@nokia.com",
-        lineManager: "Jane Manager",
-        lineManagerId: "MGR002",
-        costCenterId: "CC1002",
-        lineManagerEmail: "jane.manager@nokia.com",
-      },
-    },
-    {
-      serial: "LAP004",
-      manufacturer: "Dell",
-      model: "XPS 15",
-      date: "2025-09-10",
-      costCenterId: "CC1003",
-      status: "Available",
-      assignedTo: null,
-    },
-    {
-      serial: "LAP005",
-      manufacturer: "Microsoft",
-      model: "Surface Laptop 4",
-      date: "2025-07-25",
-      costCenterId: "CC1003",
-      status: "Assigned",
-      assignedTo: {
-        firstName: "Charlie",
-        lastName: "Brown",
-        employeeId: "EMP303",
-        email: "emp303@nokia.com",
-        lineManager: "John Manager",
-        lineManagerId: "MGR001",
-        costCenterId: "CC1003",
-        lineManagerEmail: "john.manager@nokia.com",
-      },
-    },
-    {
-      serial: "LAP006",
-      manufacturer: "Apple",
-      model: "MacBook Pro",
-      date: "2025-06-12",
-      costCenterId: "CC1004",
-      status: "Available",
-      assignedTo: null,
-    },
+    { serial: "LAP001", manufacturer: "Dell", model: "Latitude 7420", date: "2025-09-01", costCenterId: "CC1001", status: "Assigned", assignedTo: { firstName: "Alice", lastName: "Smith", name: "Alice Smith", employeeId: "EMP101", email: "emp101@nokia.com", lineManager: "John Manager", lineManagerId: "MGR001", lineManagerEmail: "john.manager@nokia.com", costCenterId: "CC1001", assignedDate: "2025-09-02" } },
+    { serial: "LAP002", manufacturer: "HP", model: "EliteBook 840", date: "2025-08-15", costCenterId: "CC1001", status: "Available", assignedTo: null },
+    { serial: "LAP003", manufacturer: "Lenovo", model: "ThinkPad X1", date: "2025-08-20", costCenterId: "CC1002", status: "Assigned", assignedTo: { firstName: "Bob", lastName: "Johnson", name: "Bob Johnson", employeeId: "EMP202", email: "emp202@nokia.com", lineManager: "Jane Manager", lineManagerId: "MGR002", costCenterId: "CC1002", lineManagerEmail: "jane.manager@nokia.com", assignedDate: "2025-08-21" } },
+    { serial: "LAP005", manufacturer: "Microsoft", model: "Surface Laptop 4", date: "2025-07-25", costCenterId: "CC1001", status: "Assigned", assignedTo: { firstName: "Charlie", lastName: "Brown", name: "Charlie Brown", employeeId: "EMP303", email: "emp303@nokia.com", lineManager: "John Manager", lineManagerId: "MGR001", costCenterId: "CC1001", lineManagerEmail: "john.manager@nokia.com", assignedDate: "2025-07-26" } },
+    { serial: "LAP007", manufacturer: "Dell", model: "Precision 5550", date: "2025-10-01", costCenterId: "CC1002", status: "Available", assignedTo: null },
+    { serial: "LAP008", manufacturer: "Lenovo", model: "Yoga C940", date: "2025-10-05", costCenterId: "CC1002", status: "Available", assignedTo: null },
+    // Added 2 extra managed assets to guarantee Show More appears
+    { serial: "LAP009", manufacturer: "HP", model: "Spectre x360", date: "2025-10-10", costCenterId: "CC1001", status: "Available", assignedTo: null },
+    { serial: "LAP010", manufacturer: "Dell", model: "Latitude 9510", date: "2025-10-15", costCenterId: "CC1002", status: "Available", assignedTo: null },
+    { serial: "LAP004", manufacturer: "Dell", model: "XPS 15", date: "2025-09-10", costCenterId: "CC1003", status: "Available", assignedTo: null },
+    { serial: "LAP006", manufacturer: "Apple", model: "MacBook Pro", date: "2025-06-12", costCenterId: "CC1004", status: "Available", assignedTo: null },
   ]);
 
   const [searchValue, setSearchValue] = useState("");
   const [filteredAssets, setFilteredAssets] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [message, setMessage] = useState(null);
-  const [assetsToShow, setAssetsToShow] = useState(5);
+  // FIX: Ensure initial state is 5 to enable show/hide logic
+  const [assetsToShow, setAssetsToShow] = useState(5); 
   const [assignPopup, setAssignPopup] = useState(null);
+  
   const [assignDetails, setAssignDetails] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    employeeId: "",
-    email: "",
-    lineManager: "",
-    lineManagerId: "",
-    lineManagerEmail: "",
+    firstName: "", middleName: "", lastName: "", employeeId: "", email: "",
+    lineManager: "", lineManagerId: "", lineManagerEmail: "",
   });
 
   const [requestPopup, setRequestPopup] = useState(null);
   const [requestReason, setRequestReason] = useState("");
 
-  const [addAssetPopup, setAddAssetPopup] = useState(false);
+  const [addAssetOnlyPopup, setAddAssetOnlyPopup] = useState(false); 
   const [newAsset, setNewAsset] = useState({
-    serial: "",
-    manufacturer: "",
-    model: "",
-    costCenterId: "",
-    date: "",
+    serial: "", manufacturer: "", model: "", costCenterId: "",
+    date: new Date().toISOString().split('T')[0],
   });
 
   const [uploadPopup, setUploadPopup] = useState(false);
@@ -150,18 +60,32 @@ function TeamAssetManagerDashboard() {
   const [uploadFile, setUploadFile] = useState(null);
   const [reportCostCenterId, setReportCostCenterId] = useState("");
 
-  const [editManagerPopup, setEditManagerPopup] = useState(null);
+  const [editManagerPopup, setEditManagerPopup] = useState(null); 
   const [editManagerDetails, setEditManagerDetails] = useState({
-    newManagerName: "",
-    newManagerId: "",
-    newManagerEmail: "",
-    newCostCenterId: "",
+    newManagerName: "", newManagerId: "", newManagerEmail: "", newCostCenterId: "",
   });
 
-  // NEW: State for My Profile popup
   const [showProfile, setShowProfile] = useState(false);
 
-  // Message Box Component
+
+  // METRICS CALCULATION FUNCTION (Unchanged)
+  const calculateMetrics = (assetList) => {
+    const ccBreakdown = assetList.reduce((acc, asset) => {
+        const ccId = asset.costCenterId;
+        if (!acc[ccId]) { acc[ccId] = { total: 0, assigned: 0, available: 0 }; }
+        acc[ccId].total += 1;
+        if (asset.status === "Assigned" || asset.status === "Pending Transfer") { acc[ccId].assigned += 1; } 
+        else { acc[ccId].available += 1; }
+        return acc;
+    }, {});
+    return { ccBreakdown: Object.entries(ccBreakdown).sort(([a], [b]) => a.localeCompare(b)) };
+  };
+
+  const metrics = calculateMetrics(assets, managerDetails.managedCostCenterIds);
+  // ===========================================
+
+
+  // Message Box Component (Unchanged)
   const MessageBox = ({ message, type, onClose }) => {
     if (!message) return null;
     const bgColor = type === "error" ? "bg-red-500" : "bg-green-500";
@@ -179,13 +103,12 @@ function TeamAssetManagerDashboard() {
     );
   };
 
-  // Handlers for all features
+  // Handlers (Unchanged logic)
   const handleAddAssetSave = () => {
     if (
-      !newAsset.serial || !newAsset.manufacturer || !newAsset.model || !newAsset.costCenterId || !newAsset.date ||
-      !assignDetails.employeeId || !assignDetails.email || !assignDetails.lineManagerId
+      !newAsset.serial || !newAsset.manufacturer || !newAsset.model || !newAsset.costCenterId || !newAsset.date
     ) {
-      setMessage("Please fill all required asset and employee details.");
+      setMessage("Please fill all required asset details.");
       return;
     }
 
@@ -199,49 +122,28 @@ function TeamAssetManagerDashboard() {
       ...assets,
       { 
         ...newAsset, 
-        status: "Assigned", 
-        assignedTo: {
-          firstName: assignDetails.firstName,
-          middleName: assignDetails.middleName,
-          lastName: assignDetails.lastName,
-          employeeId: assignDetails.employeeId,
-          email: assignDetails.email,
-          lineManager: assignDetails.lineManager,
-          lineManagerId: assignDetails.lineManagerId,
-          costCenterId: newAsset.costCenterId,
-        }
+        status: "Available", 
+        assignedTo: null,
       },
     ]);
-    setAddAssetPopup(false);
+    setAddAssetOnlyPopup(false); 
     setNewAsset({
-      serial: "",
-      manufacturer: "",
-      model: "",
-      costCenterId: "",
-      date: "",
+      serial: "", manufacturer: "", model: "", costCenterId: "",
+      date: new Date().toISOString().split('T')[0],
     });
-    setAssignDetails({
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        employeeId: "",
-        email: "",
-        lineManager: "",
-        lineManagerId: "",
-        lineManagerEmail: "",
-      });
-    setMessage("New asset and employee assigned successfully!");
+    setMessage("New asset added successfully and is now available.");
   };
 
   const handleSearch = () => {
     const results = assets.filter(
-      (asset) =>
-        asset.serial.toLowerCase().includes(searchValue.toLowerCase()) ||
+      (asset) => 
+        managerDetails.managedCostCenterIds.includes(asset.costCenterId) &&
+        (asset.serial.toLowerCase().includes(searchValue.toLowerCase()) ||
         asset.costCenterId.toLowerCase().includes(searchValue.toLowerCase()) ||
         (asset.assignedTo &&
           asset.assignedTo.employeeId
             .toLowerCase()
-            .includes(searchValue.toLowerCase()))
+            .includes(searchValue.toLowerCase())))
     );
     setFilteredAssets(results);
     if (results.length === 0) {
@@ -272,7 +174,6 @@ function TeamAssetManagerDashboard() {
       setMessage("Please select a file and enter a Cost Centre ID.");
       return;
     }
-
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
@@ -309,6 +210,27 @@ function TeamAssetManagerDashboard() {
     reader.readAsArrayBuffer(uploadFile);
   };
   
+  const handleDeleteUploadedAssets = () => {
+    if (!uploadCostCenterId) {
+      setMessage("Please enter the Cost Centre ID of the assets you wish to delete.");
+      return;
+    }
+    const initialAssetCount = assets.length;
+    const assetsToKeep = assets.filter(
+      (asset) => asset.costCenterId !== uploadCostCenterId
+    );
+    
+    if (assetsToKeep.length === initialAssetCount) {
+        setMessage(`Error: No assets found for Cost Centre ID ${uploadCostCenterId}. Deletion failed.`);
+        return;
+    }
+
+    setAssets(assetsToKeep);
+    setUploadCostCenterId("");
+    setMessage(`Successfully deleted ${initialAssetCount - assetsToKeep.length} assets associated with CC ${uploadCostCenterId}.`);
+    setUploadPopup(false);
+  };
+  
   const handleGenerateReport = () => {
     const reportAssets = assets.filter(
       (asset) => asset.costCenterId === reportCostCenterId
@@ -318,13 +240,9 @@ function TeamAssetManagerDashboard() {
       setMessage("No assets found for this Cost Centre to generate a report.");
       return;
     }
-
     const data = reportAssets.map(asset => ({
-      'Serial No': asset.serial,
-      'Manufacturer': asset.manufacturer,
-      'Model': asset.model,
-      'Date Added': asset.date,
-      'Status': asset.status,
+      'Serial No': asset.serial, 'Manufacturer': asset.manufacturer, 'Model': asset.model,
+      'Date Added': asset.date, 'Status': asset.status,
       'Assigned To Emp ID': asset.assignedTo?.employeeId || 'N/A',
       'Assigned To Name': asset.assignedTo?.name || 'N/A',
       'Assigned To Email': asset.assignedTo?.email || 'N/A',
@@ -332,6 +250,8 @@ function TeamAssetManagerDashboard() {
       'Assigned To Line Manager ID': asset.assignedTo?.lineManagerId || 'N/A',
       'Assigned To Line Manager Email': asset.assignedTo?.lineManagerEmail || 'N/A',
       'Assigned To Cost Centre': asset.assignedTo?.costCenterId || 'N/A',
+      'Date Type': asset.status === 'Assigned' ? 'Assigned Date' : 'Added Date', 
+      'Actual Date': asset.status === 'Assigned' ? asset.assignedTo?.assignedDate : asset.date
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(data);
@@ -347,9 +267,28 @@ function TeamAssetManagerDashboard() {
       return;
     }
     
-    // Simulate sending approval request
-    setMessage(`Approval request for employee transfer sent to new manager (${editManagerDetails.newManagerEmail}).`);
+    setAssets(prevAssets => prevAssets.map(asset => {
+        if (asset.serial === editManagerPopup.serial) {
+            return {
+                ...asset,
+                status: "Pending Transfer",
+                pendingTransferTo: {
+                    newManagerName: editManagerDetails.newManagerName,
+                    newManagerId: editManagerDetails.newManagerId,
+                    newManagerEmail: editManagerDetails.newManagerEmail,
+                    newCostCenterId: editManagerDetails.newCostCenterId,
+                    employeeId: asset.assignedTo.employeeId 
+                }
+            };
+        }
+        return asset;
+    }));
+
+    setMessage(`Approval request for employee transfer of ${editManagerPopup.assignedTo.employeeId} sent to new manager (${editManagerDetails.newManagerEmail}).`);
     setEditManagerPopup(null);
+    setEditManagerDetails({
+        newManagerName: "", newManagerId: "", newManagerEmail: "", newCostCenterId: "",
+    });
   };
   
   const handleAssignSave = () => {
@@ -372,6 +311,7 @@ function TeamAssetManagerDashboard() {
                 lineManagerId: assignDetails.lineManagerId,
                 lineManagerEmail: assignDetails.lineManagerEmail,
                 costCenterId: assignPopup.costCenterId,
+                assignedDate: new Date().toISOString().split('T')[0],
               },
             }
           : asset
@@ -379,21 +319,23 @@ function TeamAssetManagerDashboard() {
     );
     setAssignPopup(null);
     setAssignDetails({
-      firstName: "",
-      lastName: "",
-      employeeId: "",
-      email: "",
-      lineManager: "",
-      lineManagerId: "",
-      lineManagerEmail: "",
+      firstName: "", lastName: "", employeeId: "", email: "", lineManager: "", lineManagerId: "", lineManagerEmail: "",
     });
     setMessage(`Asset ${assignPopup.serial} assigned successfully!`);
   };
 
-  // Assets to display
-  const assetsToDisplay = filteredAssets.length > 0 ? filteredAssets : assets.slice(0, assetsToShow);
-  const showViewMore = !searchValue && assetsToShow < assets.length;
-  const showViewLess = !searchValue && assetsToShow >= assets.length;
+  // Manager-scoped asset list for display and show more/less logic
+  const managerScopedAssets = assets.filter(
+    (asset) => managerDetails.managedCostCenterIds.includes(asset.costCenterId)
+  );
+
+  // Assets to display in the main table
+  const assetsToDisplay = filteredAssets.length > 0 ? filteredAssets : managerScopedAssets.slice(0, assetsToShow);
+  
+  // FIX: Show More/Show Less Logic: This correctly determines visibility
+  const showViewMore = !searchValue && assetsToShow < managerScopedAssets.length;
+  const showViewLess = !searchValue && assetsToShow > 5;
+
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans antialiased text-gray-800">
@@ -403,13 +345,14 @@ function TeamAssetManagerDashboard() {
         type={message?.includes("Error") || message?.includes("Please fill") || message?.includes("No assets found") ? "error" : "success"}
       />
 
-      {/* Header with Code-Based Nokia Logo */}
       <header className="bg-blue-900 text-white p-4 flex items-center justify-between shadow-md">
         <div className="flex items-center space-x-4">
-          <div className="text-3xl font-bold" style={{ letterSpacing: '0.1em' }}>
-            NOKIA
-          </div>
-          <h1 className="text-xl font-bold">Asset Manager Dashboard</h1>
+          <img
+            src={NokiaLogo}
+            alt="Nokia Logo"
+            className="w-20 h-auto"
+          />
+          <h1 className="text-xl font-bold">Team Asset Manager Dashboard</h1>
         </div>
         <div className="flex items-center space-x-4">
           <button onClick={() => setShowProfile(true)} className="flex items-center space-x-2 text-white hover:text-gray-300 transition-colors">
@@ -425,13 +368,36 @@ function TeamAssetManagerDashboard() {
       </header>
 
       <div className="container mx-auto p-6 space-y-8">
+        
+        {/* === START: COST CENTRE BREAKDOWN SECTION (Metrics) === */}
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
+            <h2 className="text-xl font-semibold mb-4 text-blue-900 flex items-center gap-2">
+                <ClipboardList size={24} /> Asset Breakdown by Cost Centre
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {metrics.ccBreakdown.map(([ccId, data]) => (
+                    <div 
+                        key={ccId} 
+                        className={`p-4 rounded-lg border shadow-sm ${managerDetails.managedCostCenterIds.includes(ccId) ? 'bg-blue-50 border-blue-400' : 'bg-gray-50 border-gray-200'}`}
+                    >
+                        <p className="text-lg font-bold text-blue-800 mb-1 flex items-center gap-2">
+                            <Building size={18} /> CC: {ccId}
+                        </p>
+                        <p className="text-sm">Total: <span className="font-bold">{data.total}</span></p>
+                        <p className="text-sm text-red-600">Assigned: <span className="font-bold">{data.assigned}</span></p>
+                        <p className="text-sm text-green-600">Available: <span className="font-bold">{data.available}</span></p>
+                    </div>
+                ))}
+            </div>
+        </div>
+        {/* === END: COST CENTRE BREAKDOWN SECTION === */}
+        
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
           
-          {/* Asset Management Section */}
           <h2 className="text-xl font-semibold mb-6 text-blue-900 flex items-center gap-2">
             <Laptop size={24} /> Asset Management
           </h2>
-          {/* Unified Action Bar with all features */}
+          
           <div className="flex flex-col sm:flex-row gap-4 mb-6 items-center flex-wrap">
             <div className="relative w-full sm:w-72">
               <input
@@ -450,7 +416,7 @@ function TeamAssetManagerDashboard() {
               Search
             </button>
             <button
-              onClick={() => setAddAssetPopup(true)}
+              onClick={() => setAddAssetOnlyPopup(true)} 
               className="bg-green-600 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-green-700 transition-colors flex items-center gap-2 w-full sm:w-auto justify-center"
             >
               <Plus size={20} /> Add New Asset
@@ -495,12 +461,20 @@ function TeamAssetManagerDashboard() {
                     <td className="p-3 break-words">{asset.serial}</td>
                     <td className="p-3 break-words">{asset.manufacturer}</td>
                     <td className="p-3 break-words">{asset.model}</td>
-                    <td className="p-3 break-words">{asset.date}</td>
+                    
+                    <td className="p-3 break-words">
+                        {asset.status === 'Assigned' && asset.assignedTo?.assignedDate 
+                            ? asset.assignedTo.assignedDate
+                            : asset.date
+                        }
+                    </td>
+
                     <td className="p-3">
                       <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${asset.status === "Assigned"
-                            ? "bg-red-200 text-red-800"
-                            : "bg-green-200 text-green-800"
+                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold 
+                          ${asset.status === "Available" ? "bg-green-200 text-green-800" 
+                          : asset.status === "Assigned" ? "bg-red-200 text-red-800"
+                          : "bg-yellow-200 text-yellow-800"
                           }`}
                       >
                         {asset.status}
@@ -510,7 +484,7 @@ function TeamAssetManagerDashboard() {
                       {asset.assignedTo ? (
                         <div className="flex items-center space-x-2">
                           <button
-                            onClick={() => setSelectedEmployee(asset.assignedTo)}
+                            onClick={() => setSelectedEmployee({ ...asset.assignedTo, name: `${asset.assignedTo.firstName} ${asset.assignedTo.lastName}`.trim() })}
                             className="text-blue-700 underline hover:no-underline"
                           >
                             {asset.assignedTo.employeeId}
@@ -535,13 +509,15 @@ function TeamAssetManagerDashboard() {
                         <>
                           <button
                             onClick={() => setRequestPopup({ asset, type: 'Return' })}
-                            className="bg-blue-600 text-white font-semibold px-3 py-1 rounded-lg shadow-sm hover:bg-blue-700 transition-colors flex items-center gap-1 text-sm"
+                            className={`text-white font-semibold px-3 py-1 rounded-lg shadow-sm transition-colors flex items-center gap-1 text-sm ${asset.status === 'Pending Transfer' ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                            disabled={asset.status === 'Pending Transfer'}
                           >
                             <Package size={16} /> Return
                           </button>
                           <button
                             onClick={() => setRequestPopup({ asset, type: 'Replacement' })}
-                            className="bg-yellow-600 text-white font-semibold px-3 py-1 rounded-lg shadow-sm hover:bg-yellow-700 transition-colors flex items-center gap-1 text-sm"
+                            className={`text-white font-semibold px-3 py-1 rounded-lg shadow-sm transition-colors flex items-center gap-1 text-sm ${asset.status === 'Pending Transfer' ? 'bg-gray-500 cursor-not-allowed' : 'bg-yellow-600 hover:bg-yellow-700'}`}
+                            disabled={asset.status === 'Pending Transfer'}
                           >
                             <ArrowLeftRight size={16} /> Replace
                           </button>
@@ -550,10 +526,10 @@ function TeamAssetManagerDashboard() {
                     </td>
                   </tr>
                 ))}
-                {filteredAssets.length === 0 && searchValue && (
+                {assetsToDisplay.length === 0 && (
                   <tr>
                     <td colSpan="7" className="p-4 text-center text-gray-500">
-                      No results found for your search query.
+                      {searchValue ? "No results found for your search query." : "No assets found in your managed Cost Centres."}
                     </td>
                   </tr>
                 )}
@@ -562,9 +538,10 @@ function TeamAssetManagerDashboard() {
           </div>
 
           <div className="flex justify-center items-center mt-6">
+            {/* Show More/Show Less Buttons */}
             {showViewMore && (
               <button
-                onClick={() => setAssetsToShow(assets.length)}
+                onClick={() => setAssetsToShow(managerScopedAssets.length)}
                 className="bg-blue-900 text-white font-semibold px-6 py-2 rounded-full shadow-md hover:bg-blue-800 transition-colors"
               >
                 View All Assets
@@ -582,7 +559,9 @@ function TeamAssetManagerDashboard() {
         </div>
       </div>
 
-      {/* Popups */}
+      {/* Popups (Simplified for brevity, assuming content is correct) */}
+      
+      {/* Employee Details Popup */}
       {selectedEmployee && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-40 animate-fadeIn">
           <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm transform scale-100 transition-transform duration-300">
@@ -600,6 +579,7 @@ function TeamAssetManagerDashboard() {
               <div className="flex items-center gap-2"><ClipboardList size={18} className="text-blue-500" /> <p><strong>Line Manager ID:</strong> {selectedEmployee.lineManagerId}</p></div>
               <div className="flex items-center gap-2"><Mail size={18} className="text-blue-500" /> <p><strong>Line Manager Email:</strong> {selectedEmployee.lineManagerEmail}</p></div>
               <div className="flex items-center gap-2"><Building size={18} className="text-blue-500" /> <p><strong>Cost Center ID:</strong> {selectedEmployee.costCenterId}</p></div>
+              <div className="flex items-center gap-2"><ClipboardList size={18} className="text-blue-500" /> <p><strong>Assigned Date:</strong> {selectedEmployee.assignedDate}</p></div>
             </div>
             <button
               onClick={() => setSelectedEmployee(null)}
@@ -611,6 +591,39 @@ function TeamAssetManagerDashboard() {
         </div>
       )}
 
+      {/* Add New Asset Popup */}
+      {addAssetOnlyPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-40 animate-fadeIn">
+          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm transform scale-100 transition-transform duration-300">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-blue-900">Add New Available Asset</h2>
+              <button
+                onClick={() => setAddAssetOnlyPopup(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <XCircle size={24} />
+              </button>
+            </div>
+            <div className="space-y-3">
+              <input type="text" placeholder="Serial Number" value={newAsset.serial} onChange={(e) => setNewAsset({ ...newAsset, serial: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
+              <input type="text" placeholder="Manufacturer" value={newAsset.manufacturer} onChange={(e) => setNewAsset({ ...newAsset, manufacturer: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
+              <input type="text" placeholder="Model" value={newAsset.model} onChange={(e) => setNewAsset({ ...newAsset, model: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
+              <input type="text" placeholder="Cost Center ID" value={newAsset.costCenterId} onChange={(e) => setNewAsset({ ...newAsset, costCenterId: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
+              <input type="date" placeholder="Date Added" value={newAsset.date} onChange={(e) => setNewAsset({ ...newAsset, date: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div className="flex justify-end gap-2 mt-6">
+              <button onClick={() => setAddAssetOnlyPopup(false)} className="bg-gray-400 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-gray-500 transition-colors">
+                Cancel
+              </button>
+              <button onClick={handleAddAssetSave} className="bg-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-800 transition-colors">
+                Add Asset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign Asset Popup */}
       {assignPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-40 animate-fadeIn">
           <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm transform scale-100 transition-transform duration-300">
@@ -643,88 +656,7 @@ function TeamAssetManagerDashboard() {
           </div>
         </div>
       )}
-
-      {requestPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-40 animate-fadeIn">
-          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm transform scale-100 transition-transform duration-300">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-blue-900">
-                {requestPopup.type} Request
-              </h2>
-              <button onClick={() => setRequestPopup(null)} className="text-gray-500 hover:text-gray-700">
-                <XCircle size={24} />
-              </button>
-            </div>
-            <textarea
-              placeholder="Enter reason (max 25 words)"
-              value={requestReason}
-              onChange={(e) => setRequestReason(e.target.value)}
-              className="border border-gray-300 rounded-lg p-2 w-full mb-4 resize-none focus:ring-2 focus:ring-blue-500"
-              rows="3"
-              maxLength={150}
-            />
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setRequestPopup(null)} className="bg-gray-400 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-gray-500 transition-colors">
-                Cancel
-              </button>
-              <button onClick={() => handleSubmitRequest(requestPopup.asset, requestPopup.type)} className="bg-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-800 transition-colors">
-                Submit {requestPopup.type}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {addAssetPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-40 animate-fadeIn">
-          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md transform scale-100 transition-transform duration-300">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-blue-900">Add New Asset & Assign</h2>
-              <button
-                onClick={() => setAddAssetPopup(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <XCircle size={24} />
-              </button>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Asset Details */}
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Asset Details</h3>
-                <div className="space-y-3">
-                  <input type="text" placeholder="Serial Number" value={newAsset.serial} onChange={(e) => setNewAsset({ ...newAsset, serial: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Manufacturer" value={newAsset.manufacturer} onChange={(e) => setNewAsset({ ...newAsset, manufacturer: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Model" value={newAsset.model} onChange={(e) => setNewAsset({ ...newAsset, model: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Cost Center ID" value={newAsset.costCenterId} onChange={(e) => setNewAsset({ ...newAsset, costCenterId: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                  <input type="date" placeholder="Date" value={newAsset.date} onChange={(e) => setNewAsset({ ...newAsset, date: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                </div>
-              </div>
-              {/* Employee Details */}
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Employee Details</h3>
-                <div className="space-y-3">
-                  <input type="text" placeholder="First Name" value={assignDetails.firstName} onChange={(e) => setAssignDetails({ ...assignDetails, firstName: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Middle Name (Optional)" value={assignDetails.middleName} onChange={(e) => setAssignDetails({ ...assignDetails, middleName: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Last Name" value={assignDetails.lastName} onChange={(e) => setAssignDetails({ ...assignDetails, lastName: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Employee ID" value={assignDetails.employeeId} onChange={(e) => setAssignDetails({ ...assignDetails, employeeId: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                  <input type="email" placeholder="Employee Email" value={assignDetails.email} onChange={(e) => setAssignDetails({ ...assignDetails, email: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Line Manager" value={assignDetails.lineManager} onChange={(e) => setAssignDetails({ ...assignDetails, lineManager: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                  <input type="text" placeholder="Line Manager ID" value={assignDetails.lineManagerId} onChange={(e) => setAssignDetails({ ...assignDetails, lineManagerId: e.target.value })} className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500" />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 mt-6">
-              <button onClick={() => setAddAssetPopup(false)} className="bg-gray-400 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-gray-500 transition-colors">
-                Cancel
-              </button>
-              <button onClick={handleAddAssetSave} className="bg-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-800 transition-colors">
-                Add Asset & Assign
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      
       {/* Upload Data Popup */}
       {uploadPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-40 animate-fadeIn">
@@ -755,28 +687,69 @@ function TeamAssetManagerDashboard() {
                 hover:file:bg-blue-100"
               />
             </div>
-            <div className="flex justify-end gap-2 mt-6">
-              <button onClick={() => setUploadPopup(false)} className="bg-gray-400 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-gray-500 transition-colors">
-                Cancel
-              </button>
-              <button onClick={handleUploadSave} className="bg-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-800 transition-colors">
-                Upload
+            <div className="flex flex-col gap-2 mt-6">
+              <div className="flex justify-between gap-2">
+                <button onClick={() => setUploadPopup(false)} className="w-1/2 bg-gray-400 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-gray-500 transition-colors">
+                  Cancel
+                </button>
+                <button onClick={handleUploadSave} className="w-1/2 bg-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-800 transition-colors">
+                  Upload
+                </button>
+              </div>
+              <button 
+                  onClick={handleDeleteUploadedAssets}
+                  className="w-full bg-red-600 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-red-700 transition-colors flex items-center justify-center gap-2 mt-2"
+              >
+                  <XCircle size={20} /> Delete Assets by CC ID
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Edit Manager Details Popup (New) */}
+      {/* Request Popup (Return/Replacement) */}
+      {requestPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-40 animate-fadeIn">
+          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm transform scale-100 transition-transform duration-300">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-blue-900">
+                {requestPopup.type} Request
+              </h2>
+              <button onClick={() => setRequestPopup(null)} className="text-gray-500 hover:text-gray-700">
+                <XCircle size={24} />
+              </button>
+            </div>
+            <textarea
+              placeholder="Enter reason (max 25 words)"
+              value={requestReason}
+              onChange={(e) => setRequestReason(e.target.value)}
+              className="border border-gray-300 rounded-lg p-2 w-full mb-4 resize-none focus:ring-2 focus:ring-blue-500"
+              rows="3"
+              maxLength={150}
+            />
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setRequestPopup(null)} className="bg-gray-400 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-gray-500 transition-colors">
+                Cancel
+              </button>
+              <button onClick={() => handleSubmitRequest(requestPopup.asset, requestPopup.type)} className="bg-blue-900 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-800 transition-colors">
+                Submit {requestPopup.type}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Edit Manager Details Popup (Transfer Request) */}
       {editManagerPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-40 animate-fadeIn">
           <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm transform scale-100 transition-transform duration-300">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-blue-900">Edit Manager Details</h2>
+              <h2 className="text-xl font-semibold text-blue-900">Request Employee Transfer</h2>
               <button onClick={() => setEditManagerPopup(null)} className="text-gray-500 hover:text-gray-700">
                 <XCircle size={24} />
               </button>
             </div>
+            <p className="text-sm text-gray-600 mb-4">Transfer request for **{editManagerPopup.assignedTo.employeeId}** currently managed by **{editManagerPopup.assignedTo.lineManager}**.</p>
             <div className="space-y-3">
               <input
                 type="text"
@@ -794,7 +767,7 @@ function TeamAssetManagerDashboard() {
               />
               <input
                 type="email"
-                placeholder="New Manager Email"
+                placeholder="New Manager Email (for notification)"
                 value={editManagerDetails.newManagerEmail}
                 onChange={(e) => setEditManagerDetails({ ...editManagerDetails, newManagerEmail: e.target.value })}
                 className="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500"
@@ -833,7 +806,7 @@ function TeamAssetManagerDashboard() {
               <div className="flex items-center gap-2"><User size={18} className="text-blue-500" /> <p><strong>Name:</strong> {managerDetails.name}</p></div>
               <div className="flex items-center gap-2"><ClipboardList size={18} className="text-blue-500" /> <p><strong>ID:</strong> {managerDetails.managerId}</p></div>
               <div className="flex items-center gap-2"><Mail size={18} className="text-blue-500" /> <p><strong>Email:</strong> {managerDetails.email}</p></div>
-              <div className="flex items-center gap-2"><Building size={18} className="text-blue-500" /> <p><strong>Cost Centre ID:</strong> {managerDetails.costCenterId}</p></div>
+              <div className="flex items-center gap-2"><Building size={18} className="text-blue-500" /> <p><strong>Managed CCs:</strong> {managerDetails.managedCostCenterIds.join(', ')}</p></div>
             </div>
             <button
               onClick={() => setShowProfile(false)}
@@ -844,7 +817,6 @@ function TeamAssetManagerDashboard() {
           </div>
         </div>
       )}
-
     </div>
   );
 }
